@@ -1,148 +1,64 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
-
-const nav = [
-  ['Overview', '⌂'], ['Customers', '◉'], ['Plans & Products', '▣'], ['Sessions', '◌'],
-  ['Payments', '₮'], ['Network', '⌁'], ['Agents & Partners', '◎'], ['Analytics', '◫'],
-  ['Reports', '▤'], ['Security & Audit', '◈'], ['Settings', '⚙'],
+const capabilities = [
+  ['01', 'Billing & Revenue', 'Subscriptions, packages, payments, reconciliation and revenue visibility in one operating layer.'],
+  ['02', 'Network Operations', 'Sites, routers, sessions, health and connectivity operations without switching between tools.'],
+  ['03', 'Customer Operations', 'Customer identity, accounts, service lifecycle and operational history from one workspace.'],
+  ['04', 'Access & Automation', 'Hotspot, vouchers, PPPoE/RADIUS workflows and adapter-ready network automation.'],
 ];
 
-const demoLocations = [
-  ['Tanzania', '14 sites', '6,482', 'TZS 9.24M', '99.98%'],
-  ['Kenya', '8 sites', '3,104', 'TZS 5.61M', '99.96%'],
-  ['Uganda', '5 sites', '2,087', 'TZS 2.74M', '99.94%'],
-  ['Rwanda', '3 sites', '1,173', 'TZS 0.83M', '99.99%'],
-];
-
-const demoSessions = [
-  ['Amani J.', 'Njiro', 'MikroTik CCR', 'Daily 5GB', '10.20.1.42', '01:42', 'ACTIVE'],
-  ['Neema M.', 'Westlands', 'UniFi Gateway', '50 Mbps', '10.20.3.18', '00:57', 'ACTIVE'],
-  ['Baraka K.', 'Kisongo', 'MikroTik hEX', 'Weekly 20GB', '10.20.7.31', '03:12', 'IDLE'],
-  ['Grace N.', 'Kampala Central', 'Omada ER', '30 Mbps', '10.20.9.04', '00:31', 'ACTIVE'],
-];
-
-const bars = [38, 51, 44, 64, 58, 71, 67, 83, 74, 88, 79, 94, 86, 91, 100];
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat('en-US').format(value);
-}
+const integrations = ['MikroTik', 'FreeRADIUS', 'Mobile Money', 'Hotspot', 'PPPoE', 'REST APIs'];
 
 export default function Home() {
-  const [active, setActive] = useState('Overview');
-  const [period, setPeriod] = useState('30D');
-  const [overview, setOverview] = useState<any>(null);
-
-  useEffect(() => {
-    const token = window.localStorage.getItem('nexora.accessToken');
-    if (!token) return;
-
-    fetch(`${API_URL}/overview`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((response) => response.ok ? response.json() : null)
-      .then((data) => { if (data) setOverview(data); })
-      .catch(() => undefined);
-  }, []);
-
-  const currency = overview?.tenant?.currency ?? 'TZS';
-  const monthlyRevenue = overview?.kpis?.monthlyRevenue ?? 18420000;
-  const activeCustomers = overview?.kpis?.activeCustomers ?? 12846;
-  const onlineSessions = overview?.kpis?.onlineSessions ?? 2731;
-  const availability = overview?.kpis?.networkAvailability ?? 99.97;
-  const network = overview?.network ?? { totalRouters: 30, online: 28, degraded: 2, offline: 0 };
-  const liveSessions = overview?.sessions?.length ? overview.sessions.map((row: any) => [
-    row.customer, row.location, row.router, 'Connected', row.ip_address ?? '—', 'LIVE', row.status,
-  ]) : demoSessions;
-
   return (
-    <main className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">N</div>
-          <div><span>NEXORA</span><small>Connected business OS</small></div>
+    <main className="landing">
+      <nav className="nav">
+        <Link href="/" className="logo"><span>N</span>NEXORA</Link>
+        <div className="links">
+          <a href="#platform">Platform</a><a href="#capabilities">Capabilities</a><a href="#security">Security</a><a href="#pricing">Pricing</a>
         </div>
-        <div className="workspace-switch"><span className="workspace-dot"/> Global Workspace <span>⌄</span></div>
-        <nav className="nav">
-          <p className="nav-section">OPERATIONS</p>
-          {nav.slice(0, 7).map(([item, icon]) => (
-            <a key={item} href={item === 'Overview' ? '/' : item === 'Customers' ? '/customers' : item === 'Plans & Products' ? '/packages' : item === 'Purchases' ? '/purchases' : item === 'Sessions' ? '/sessions' : item === 'Payments' ? '/payments' : item === 'Network' ? '/network' : item === 'Agents & Partners' ? '/agents' : item === 'Analytics' ? '/analytics' : item === 'Reports' ? '/reports' : item === 'Security & Audit' ? '/security' : '/settings'} className={active === item ? 'nav-item active' : 'nav-item'}>
-              <span className="nav-icon">{icon}</span><span>{item}</span>
-            </a>
-          ))}
-          <p className="nav-section second">INSIGHTS & CONTROL</p>
-          {nav.slice(7).map(([item, icon]) => (
-            <a key={item} href={item === 'Overview' ? '/' : item === 'Customers' ? '/customers' : item === 'Plans & Products' ? '/packages' : item === 'Purchases' ? '/purchases' : item === 'Sessions' ? '/sessions' : item === 'Payments' ? '/payments' : item === 'Network' ? '/network' : item === 'Agents & Partners' ? '/agents' : item === 'Analytics' ? '/analytics' : item === 'Reports' ? '/reports' : item === 'Security & Audit' ? '/security' : '/settings'} className={active === item ? 'nav-item active' : 'nav-item'}>
-              <span className="nav-icon">{icon}</span><span>{item}</span>
-            </a>
-          ))}
-        </nav>
-        <div className="sidebar-status"><span className="pulse"/><div><strong>All systems operational</strong><small>{overview ? 'Live data connected' : 'Demo data · sign in to connect'}</small></div></div>
-        <div className="profile"><div className="avatar">Y</div><div><strong>Yurian</strong><small>Owner · Global Admin</small></div><span className="profile-more">•••</span></div>
-      </aside>
+        <div className="nav-actions"><Link href="/dashboard" className="login">Sign in</Link><Link href="/dashboard" className="nav-cta">Open console <span>↗</span></Link></div>
+      </nav>
 
-      <section className="content">
-        <header className="topbar">
-          <div><div className="eyebrow">NEXORA / {active.toUpperCase()}</div><h1>Operations overview</h1><p className="context">A real-time view of revenue, subscribers, network health and activity.</p></div>
-          <div className="top-actions">
-            <button className="date-button">◷ <span>25 Aug 2026</span></button>
-            <button className="selector">All regions <span>⌄</span></button>
-            <button className="icon-button">⌕</button><button className="icon-button notification">♧<i/></button>
-            <div className="avatar small-avatar">Y</div>
-          </div>
-        </header>
-
-        <section className="kpi-grid">
-          {[
-            ['Monthly recurring revenue', `${currency} ${formatNumber(monthlyRevenue)}`, '+14.8%', 'current month'],
-            ['Active subscribers', formatNumber(activeCustomers), '+8.6%', 'active customers'],
-            ['Online sessions', formatNumber(onlineSessions), '+11.2%', 'currently connected'],
-            ['Network availability', `${availability}%`, '+0.08%', 'current fleet'],
-          ].map(([label, value, delta, note]) => <article className="kpi" key={label}>
-            <div className="kpi-label"><span>{label}</span><button>•••</button></div>
-            <strong>{value}</strong><div className="kpi-foot"><span>↗ {delta}</span><small>{note}</small></div>
-          </article>)}
-        </section>
-
-        <section className="hero-grid">
-          <article className="panel revenue-panel">
-            <div className="panel-head"><div><div className="panel-kicker">FINANCIAL PERFORMANCE</div><h2>Revenue performance</h2><p>Consolidated across all operating regions</p></div><div className="periods">{['7D','30D','90D','1Y'].map(x => <button key={x} onClick={() => setPeriod(x)} className={period === x ? 'selected' : ''}>{x}</button>)}</div></div>
-            <div className="revenue-total"><strong>{currency} {formatNumber(monthlyRevenue)}</strong><span>↗ 18.4%</span><small>current month</small></div>
-            <div className="chart"><div className="chart-scale"><span>50M</span><span>35M</span><span>20M</span><span>5M</span><span>0</span></div><div className="chart-body"><div className="grid-line g1"/><div className="grid-line g2"/><div className="grid-line g3"/><div className="grid-line g4"/><div className="bars">{bars.map((h, i) => <span style={{ height: `${h}%` }} key={i} />)}</div><div className="x-labels"><span>01</span><span>05</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span></div></div></div>
-          </article>
-          <article className="panel health-panel">
-            <div className="panel-kicker">NETWORK HEALTH</div><h2>Infrastructure status</h2><p>Across {network.totalRouters} registered routers</p>
-            <div className="health-ring"><div><strong>{availability}%</strong><span>availability</span></div></div>
-            <div className="health-stats"><div><span className="health-dot online"/> <strong>{network.online}</strong><small>Operational</small></div><div><span className="health-dot warn"/><strong>{network.degraded}</strong><small>Attention</small></div><div><span className="health-dot down"/><strong>{network.offline}</strong><small>Offline</small></div></div>
-            <button className="full-button">Open network operations <span>→</span></button>
-          </article>
-        </section>
-
-        <section className="content-grid">
-          <article className="panel locations-panel"><div className="panel-head"><div><div className="panel-kicker">GLOBAL FOOTPRINT</div><h2>Regional performance</h2><p>Subscriber and revenue distribution</p></div><button className="outline-button">View all regions →</button></div>
-            <div className="location-table"><div className="location-header"><span>REGION</span><span>SITES</span><span>SUBSCRIBERS</span><span>REVENUE</span><span>UPTIME</span></div>{(overview?.locations?.length ? overview.locations : demoLocations).map((row: any, i: number) => {
-              const demo = demoLocations[i] ?? ['Global', '—', '0', `${currency} 0`, '100%'];
-              const name = row.name;
-              const sites = Array.isArray(row) ? row[1] : `${row.routers} routers`;
-              const subscribers = Array.isArray(row) ? row[2] : formatNumber(row.activeUsers);
-              const revenue = Array.isArray(row) ? row[3] : 'Live data';
-              const uptime = Array.isArray(row) ? row[4] : `${row.routers ? Math.round((row.onlineRouters / row.routers) * 10000) / 100 : 100}%`;
-              return <div className="location-row" key={name}><div className="region"><span className="region-code">{Array.isArray(row) ? ['TZ','KE','UG','RW'][i] ?? 'GL' : name.slice(0,2).toUpperCase()}</span><strong>{name}</strong></div><span>{sites}</span><span>{subscribers}</span><strong>{revenue || demo[3]}</strong><span className="uptime">● {uptime}</span></div>;
-            })}</div>
-          </article>
-          <article className="panel attention-panel"><div className="panel-head"><div><div className="panel-kicker">OPERATIONS</div><h2>Attention required</h2><p>Prioritized events from your network</p></div><span className="alert-count">{overview?.kpis?.paymentFailures ?? 3}</span></div>
-            <div className="attention-item"><span className="severity critical"/><div><strong>Payment failures detected</strong><small>{overview?.kpis?.paymentFailures ?? 7} failed attempts · current period</small></div><span>›</span></div>
-            <div className="attention-item"><span className="severity warning"/><div><strong>Router requires review</strong><small>{network.degraded} routers · degraded state</small></div><span>›</span></div>
-            <div className="attention-item"><span className="severity info"/><div><strong>Voucher batches expiring</strong><small>Review active inventory before expiry</small></div><span>›</span></div>
-            <button className="full-button">Review all alerts <span>→</span></button>
-          </article>
-        </section>
-
-        <section className="panel sessions-panel"><div className="panel-head"><div><div className="panel-kicker">LIVE NETWORK</div><h2>Active sessions</h2><p>{formatNumber(onlineSessions)} users currently connected</p></div><div className="session-actions"><span className="live-pill"><i/> LIVE</span><button className="outline-button">Export CSV</button><button className="outline-button">View sessions →</button></div></div>
-          <div className="table-wrap"><table><thead><tr>{['Customer','Location','Gateway','Plan','IP address','Duration','Status'].map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{liveSessions.map((row: string[]) => <tr key={`${row[0]}-${row[4]}`}>{row.map((cell, i) => <td key={i}>{i === 6 ? <span className={`status ${cell.toLowerCase()}`}><i/> {cell}</span> : cell}</td>)}</tr>)}</tbody></table></div>
-        </section>
-        <footer className="footer"><span>NEXORA Cloud · v0.1 Foundation</span><span>{overview ? 'Live tenant data · refreshed on load' : 'Demo workspace · authentication required for live data'}</span></footer>
+      <section className="hero">
+        <div className="eyebrow">THE OPERATING PLATFORM FOR CONNECTED BUSINESSES</div>
+        <h1>Run your network.<br/><em>Grow your business.</em></h1>
+        <p>NEXORA unifies WiFi billing, customer operations, payments, access control and network intelligence into one command center built for modern ISPs, WISPs, venues and managed networks.</p>
+        <div className="hero-actions"><Link href="/dashboard" className="primary">Enter NEXORA <span>→</span></Link><a href="#platform" className="secondary">Explore platform</a></div>
+        <div className="trust"><span>Built for operations teams</span><i/> <span>Multi-tenant by design</span><i/> <span>API-first architecture</span></div>
       </section>
+
+      <section id="platform" className="command">
+        <div className="section-label">01 / COMMAND CENTER</div>
+        <div className="command-head"><h2>One console for the<br/><span>whole operation.</span></h2><p>See commercial performance and network state together. NEXORA turns fragmented operational data into decisions your team can act on.</p></div>
+        <div className="mock">
+          <div className="mock-top"><div className="mini-brand"><b>N</b> NEXORA <small>COMMAND CENTER</small></div><span>● LIVE OPERATIONS</span></div>
+          <div className="mock-grid">
+            <div className="mock-side"><b>OPERATIONS</b><span className="active">⌂ Overview</span><span>◉ Customers</span><span>▣ Plans</span><span>◌ Sessions</span><span>₮ Payments</span><span>⌁ Network</span><b>CONTROL</b><span>◫ Analytics</span><span>◈ Security</span></div>
+            <div className="mock-main"><div className="mock-kpis"><div><small>MONTHLY REVENUE</small><strong>TZS 18.42M</strong><i>↗ 14.8%</i></div><div><small>ACTIVE SUBSCRIBERS</small><strong>12,846</strong><i>↗ 8.6%</i></div><div><small>ONLINE SESSIONS</small><strong>2,731</strong><i>↗ 11.2%</i></div><div><small>NETWORK AVAILABILITY</small><strong>99.97%</strong><i>↗ 0.08%</i></div></div><div className="mock-panels"><div className="chart-panel"><small>FINANCIAL PERFORMANCE</small><h3>Revenue performance</h3><div className="chart-bars">{[32,48,40,63,51,74,62,82,70,88,76,94,83,100].map((h,i)=><i key={i} style={{height:h+'%'}}/>)}</div></div><div className="status-panel"><small>NETWORK HEALTH</small><h3>Infrastructure status</h3><div className="ring">99.97%<small>availability</small></div><p><b>28</b> Operational &nbsp; <b>2</b> Attention</p></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="capabilities" className="capabilities">
+        <div className="section-label">02 / PLATFORM</div>
+        <div className="cap-head"><h2>Everything connected.<br/><span>Nothing duplicated.</span></h2><p>Designed as a modular operating system rather than another dashboard, so every domain shares the same tenant, identity and data foundations.</p></div>
+        <div className="cap-grid">{capabilities.map(([n,t,d])=><article key={n}><small>{n}</small><h3>{t}</h3><p>{d}</p><span>Explore capability →</span></article>)}</div>
+      </section>
+
+      <section id="security" className="security"><div><div className="section-label">03 / TRUST ARCHITECTURE</div><h2>Built for businesses<br/><span>that cannot guess.</span></h2></div><div className="security-copy"><p>Tenant isolation, server-side authorization, verified payment events, idempotent integrations and audit-ready critical mutations are architectural rules, not marketing decorations.</p><div className="checks"><span>✓ Multi-tenant isolation</span><span>✓ JWT identity & RBAC</span><span>✓ Payment verification</span><span>✓ Audit events</span><span>✓ Adapter-based integrations</span><span>✓ PostgreSQL source of truth</span></div></div></section>
+
+      <section className="ecosystem"><div className="section-label">04 / ECOSYSTEM</div><h2>Connect the stack<br/><span>you already run.</span></h2><div className="integration-grid">{integrations.map(x=><div key={x}><b>{x.slice(0,1)}</b><span>{x}</span></div>)}</div></section>
+
+      <section id="pricing" className="final"><div className="section-label">05 / START OPERATING</div><h2>Your network is already complex.<br/><em>Your software shouldn't be.</em></h2><p>Move billing, customers, payments and network operations into one source of operational truth.</p><Link href="/dashboard" className="primary">Open NEXORA Console <span>↗</span></Link></section>
+
+      <footer><Link href="/" className="logo"><span>N</span>NEXORA</Link><p>The Operating Platform for Connected Businesses.</p><small>© 2026 NEXORA. Built for connected operations.</small></footer>
+
+      <style jsx>{`
+        .landing{background:#07101f;color:#eef4ff;min-height:100vh;font-family:Arial,Helvetica,sans-serif;overflow:hidden}.nav{height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 6vw;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:20;background:rgba(7,16,31,.86);backdrop-filter:blur(16px)}.logo{color:#fff;text-decoration:none;font-weight:800;letter-spacing:.18em;font-size:13px;display:flex;align-items:center;gap:10px}.logo span,.mini-brand b{width:28px;height:28px;border:1px solid #46a8ff;border-radius:8px;display:grid;place-items:center;color:#69bcff}.links{display:flex;gap:30px}.links a,.login{color:#91a2b9;text-decoration:none;font-size:11px}.nav-actions{display:flex;align-items:center;gap:18px}.nav-cta,.primary{background:#f4f8ff;color:#07101f;text-decoration:none;border-radius:7px;padding:11px 16px;font-weight:800;font-size:10px}.nav-cta span,.primary span{margin-left:8px}.hero{max-width:1120px;margin:auto;padding:130px 6vw 110px;text-align:center;position:relative}.hero:before{content:'';position:absolute;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(41,135,255,.2),transparent 67%);top:10px;left:50%;transform:translateX(-50%);pointer-events:none}.eyebrow,.section-label{font-size:9px;letter-spacing:.2em;color:#5caeff;font-weight:800}.hero h1{font-size:clamp(48px,7vw,88px);line-height:.94;letter-spacing:-.065em;margin:22px 0}.hero h1 em,.command h2 span,.cap-head h2 span,.security h2 span,.ecosystem h2 span,.final h2 em{font-style:normal;color:#71bcff}.hero>p{max-width:690px;margin:0 auto;color:#9aaac0;font-size:15px;line-height:1.8}.hero-actions{display:flex;justify-content:center;gap:10px;margin:30px 0}.secondary{border:1px solid rgba(255,255,255,.14);color:#dce8f8;text-decoration:none;padding:11px 16px;border-radius:7px;font-size:10px}.trust{display:flex;justify-content:center;gap:16px;color:#667991;font-size:9px;margin-top:38px}.trust i{width:3px;height:3px;border-radius:50%;background:#52667e;margin-top:4px}.command,.capabilities,.ecosystem,.final{padding:100px 6vw;max-width:1220px;margin:auto}.command-head,.cap-head{display:flex;justify-content:space-between;gap:50px;margin:22px 0 45px}.command h2,.cap-head h2,.security h2,.ecosystem h2{font-size:42px;line-height:1;letter-spacing:-.045em;margin:0}.command-head p,.cap-head p{max-width:420px;color:#8496ad;font-size:12px;line-height:1.8;margin:0}.mock{border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#0b1728;box-shadow:0 40px 100px rgba(0,0,0,.35);overflow:hidden}.mock-top{height:50px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:8px;color:#5db1ff}.mini-brand{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:800}.mini-brand small{color:#64768d;font-size:6px;margin-left:3px}.mini-brand b{width:22px;height:22px;border-radius:5px}.mock-grid{display:grid;grid-template-columns:160px 1fr;min-height:370px}.mock-side{border-right:1px solid rgba(255,255,255,.06);padding:22px 12px;display:flex;flex-direction:column;gap:6px;color:#7589a1;font-size:8px}.mock-side b{font-size:6px;color:#4d6077;letter-spacing:.15em;margin:8px 5px}.mock-side .active{background:#12263e;color:#fff;border-radius:5px}.mock-side span{padding:8px}.mock-main{padding:20px}.mock-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.mock-kpis div,.chart-panel,.status-panel{border:1px solid rgba(255,255,255,.07);background:#0d1b2e;border-radius:8px;padding:14px}.mock-kpis small,.chart-panel small,.status-panel small{display:block;font-size:6px;color:#62768e;letter-spacing:.1em}.mock-kpis strong{display:block;font-size:16px;margin:10px 0 4px}.mock-kpis i{font-size:7px;color:#55c99a;font-style:normal}.mock-panels{display:grid;grid-template-columns:1.5fr 1fr;gap:8px;margin-top:8px}.chart-panel h3,.status-panel h3{font-size:11px;margin:7px 0}.chart-bars{height:190px;display:flex;align-items:flex-end;gap:6px;padding-top:18px}.chart-bars i{flex:1;background:linear-gradient(to top,#1b6fc0,#61b9ff);border-radius:3px 3px 0 0;opacity:.85}.ring{width:125px;height:125px;border:8px solid #247cc9;border-right-color:#18304a;border-radius:50%;display:grid;place-items:center;margin:25px auto 15px;font-size:17px;font-weight:800}.ring small{font-size:7px;color:#6f849d;font-weight:400}.status-panel p{font-size:7px;color:#6d8199;text-align:center}.status-panel p b{color:#eaf3ff}.cap-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.08);margin-top:35px}.cap-grid article{padding:28px 22px 22px;border-right:1px solid rgba(255,255,255,.08)}.cap-grid article:last-child{border:0}.cap-grid small{color:#4f6781;font-size:8px}.cap-grid h3{font-size:17px;margin:32px 0 12px}.cap-grid p{color:#7e91a8;font-size:10px;line-height:1.7;min-height:68px}.cap-grid span{font-size:8px;color:#5eb3ff}.security{border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:100px 12vw;display:grid;grid-template-columns:1fr 1fr;gap:80px;background:#091525}.security h2{margin-top:20px}.security-copy p{color:#8496ad;font-size:12px;line-height:1.9;margin-top:30px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}.checks span{font-size:9px;color:#c2d2e5}.checks span::first-letter{color:#5fb4ff}.ecosystem h2{margin:20px 0 45px}.integration-grid{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid rgba(255,255,255,.08)}.integration-grid div{padding:24px 14px;border-right:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}.integration-grid div:last-child{border:0}.integration-grid b{width:24px;height:24px;border-radius:5px;background:#10253d;display:grid;place-items:center;color:#63b8ff;font-size:9px}.integration-grid span{font-size:8px;color:#93a5ba}.final{text-align:center;padding-top:130px;padding-bottom:130px}.final h2{font-size:48px;letter-spacing:-.05em;line-height:1.05;margin:20px 0}.final p{color:#8496ad;font-size:12px;margin:0 auto 28px}.final .primary{display:inline-block}footer{border-top:1px solid rgba(255,255,255,.08);padding:30px 6vw;display:flex;align-items:center;gap:30px}footer p{font-size:9px;color:#667991;margin:0;flex:1}footer small{font-size:7px;color:#4f6075}@media(max-width:850px){.links{display:none}.command-head,.cap-head,.security{display:block}.command-head p,.cap-head p{margin-top:20px}.mock-grid{grid-template-columns:1fr}.mock-side{display:none}.mock-kpis{grid-template-columns:1fr 1fr}.mock-panels{grid-template-columns:1fr}.cap-grid{grid-template-columns:1fr 1fr}.integration-grid{grid-template-columns:1fr 1fr}.integration-grid div:nth-child(2n){border-right:0}.security{padding:70px 6vw}.hero{padding-top:90px}.hero h1{font-size:50px}.trust{flex-wrap:wrap}.final h2{font-size:36px}footer{display:block}footer p{margin:12px 0}}
+      `}</style>
     </main>
   );
 }

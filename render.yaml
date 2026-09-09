@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: nexora-api
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm --filter @nexora/api build
+    startCommand: pnpm --filter @nexora/api migrate && pnpm --filter @nexora/api start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: CORS_ORIGIN
+        fromService:
+          name: nexora-production
+          type: web
+          property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nexora-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: nexora-production
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm --filter @nexora/web build
+    startCommand: pnpm --filter @nexora/web start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: nexora-api
+          type: web
+          property: host
+
+databases:
+  - name: nexora-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: 18

@@ -7,7 +7,7 @@ export class OverviewService {
   constructor(@Inject(PG_POOL) private readonly db: Pool) {}
 
   async getOverview(tenantId: string) {
-    const [tenant, customers, sessions, routers, payments, locations, liveSessions] = await Promise.all([
+    const [tenant, customers, sessions, routers, payments, locations, liveSessions, revenueSeries] = await Promise.all([
       this.db.query(`SELECT id, name, currency, timezone, status FROM tenants WHERE id = $1`, [tenantId]),
       this.db.query(
         `SELECT COUNT(*)::int AS total, COUNT(*) FILTER (WHERE is_active)::int AS active
@@ -67,6 +67,15 @@ export class OverviewService {
          LIMIT 10`,
         [tenantId],
       ),
+      this.db.query(
+        `SELECT EXTRACT(DAY FROM day)::int AS day,
+                COALESCE(SUM(p.amount) FILTER (WHERE p.status = 'SUCCESS'), 0)::numeric AS revenue
+         FROM generate_series(date_trunc('month', now()), date_trunc('month', now()) + interval '1 month' - interval '1 day', interval '1 day') day
+         LEFT JOIN payments p ON p.tenant_id = $1 AND p.created_at >= day AND p.created_at < day + interval '1 day'
+         GROUP BY day
+         ORDER BY day`,
+        [tenantId],
+      ),
     ]);
 
     if (!tenant.rowCount) throw new Error('Tenant not found');
@@ -103,6 +112,7 @@ export class OverviewService {
         activeUsers: Number(row.active_users),
         onlineRouters: Number(row.online_routers),
       })),
+      revenueSeries: revenueSeries.rows.map((row) => Number(row.revenue)),
       sessions: liveSessions.rows.map((row) => ({
         ...row,
         bytesIn: Number(row.bytes_in),

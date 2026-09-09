@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 type Purchase = { id: string; customerId: string; customerName: string; packageId: string; packageName: string; routerId?: string | null; price: string | number; currency: string; status: string; startsAt?: string | null; endsAt?: string | null; createdAt: string };
 
-afunction date(value?: string | null) { return value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—'; }
+function date(value?: string | null) { return value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '—'; }
 
 export default function PurchasesPage() {
   const [rows, setRows] = useState<Purchase[]>([]);

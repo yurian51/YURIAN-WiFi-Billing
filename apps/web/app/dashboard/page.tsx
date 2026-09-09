@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://nexora-api-boiv.onrender.com/api/v1';
 
 const nav = [
   ['Overview', '⌂'], ['Customers', '◉'], ['Plans & Products', '▣'], ['Sessions', '◌'],
@@ -10,21 +10,7 @@ const nav = [
   ['Reports', '▤'], ['Security & Audit', '◈'], ['Settings', '⚙'],
 ];
 
-const demoLocations = [
-  ['Tanzania', '14 sites', '6,482', 'TZS 9.24M', '99.98%'],
-  ['Kenya', '8 sites', '3,104', 'TZS 5.61M', '99.96%'],
-  ['Uganda', '5 sites', '2,087', 'TZS 2.74M', '99.94%'],
-  ['Rwanda', '3 sites', '1,173', 'TZS 0.83M', '99.99%'],
-];
-
-const demoSessions = [
-  ['Amani J.', 'Njiro', 'MikroTik CCR', 'Daily 5GB', '10.20.1.42', '01:42', 'ACTIVE'],
-  ['Neema M.', 'Westlands', 'UniFi Gateway', '50 Mbps', '10.20.3.18', '00:57', 'ACTIVE'],
-  ['Baraka K.', 'Kisongo', 'MikroTik hEX', 'Weekly 20GB', '10.20.7.31', '03:12', 'IDLE'],
-  ['Grace N.', 'Kampala Central', 'Omada ER', '30 Mbps', '10.20.9.04', '00:31', 'ACTIVE'],
-];
-
-const bars = [38, 51, 44, 64, 58, 71, 67, 83, 74, 88, 79, 94, 86, 91, 100];
+const bars = [12, 18, 15, 24, 21, 28, 26, 33, 30, 36, 32, 39, 35, 37, 42];
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat('en-US').format(value);
@@ -46,14 +32,15 @@ export default function Home() {
   }, []);
 
   const currency = overview?.tenant?.currency ?? 'TZS';
-  const monthlyRevenue = overview?.kpis?.monthlyRevenue ?? 18420000;
-  const activeCustomers = overview?.kpis?.activeCustomers ?? 12846;
-  const onlineSessions = overview?.kpis?.onlineSessions ?? 2731;
-  const availability = overview?.kpis?.networkAvailability ?? 99.97;
-  const network = overview?.network ?? { totalRouters: 30, online: 28, degraded: 2, offline: 0 };
+  const hasLiveData = Boolean(overview);
+  const monthlyRevenue = overview?.kpis?.monthlyRevenue ?? 0;
+  const activeCustomers = overview?.kpis?.activeCustomers ?? 0;
+  const onlineSessions = overview?.kpis?.onlineSessions ?? 0;
+  const availability = overview?.kpis?.networkAvailability ?? 0;
+  const network = overview?.network ?? { totalRouters: 0, online: 0, degraded: 0, offline: 0 };
   const liveSessions = overview?.sessions?.length ? overview.sessions.map((row: any) => [
     row.customer, row.location, row.router, 'Connected', row.ip_address ?? '—', 'LIVE', row.status,
-  ]) : demoSessions;
+  ]) : [];
 
   return (
     <main className="app-shell">
@@ -77,7 +64,7 @@ export default function Home() {
             </a>
           ))}
         </nav>
-        <div className="sidebar-status"><span className="pulse"/><div><strong>All systems operational</strong><small>{overview ? 'Live data connected' : 'Demo data · sign in to connect'}</small></div></div>
+        <div className="sidebar-status"><span className="pulse"/><div><strong>{overview ? 'Live data connected' : 'Live data unavailable'}</strong><small>{overview ? 'Tenant metrics loaded' : 'Sign in to connect your tenant'}</small></div></div>
         <div className="profile"><div className="avatar">Y</div><div><strong>Yurian</strong><small>Owner · Global Admin</small></div><span className="profile-more">•••</span></div>
       </aside>
 
@@ -120,13 +107,12 @@ export default function Home() {
 
         <section className="content-grid">
           <article className="panel locations-panel"><div className="panel-head"><div><div className="panel-kicker">GLOBAL FOOTPRINT</div><h2>Regional performance</h2><p>Subscriber and revenue distribution</p></div><button className="outline-button">View all regions →</button></div>
-            <div className="location-table"><div className="location-header"><span>REGION</span><span>SITES</span><span>SUBSCRIBERS</span><span>REVENUE</span><span>UPTIME</span></div>{(overview?.locations?.length ? overview.locations : demoLocations).map((row: any, i: number) => {
-              const demo = demoLocations[i] ?? ['Global', '—', '0', `${currency} 0`, '100%'];
-              const name = row.name;
+            <div className="location-table"><div className="location-header"><span>REGION</span><span>SITES</span><span>SUBSCRIBERS</span><span>REVENUE</span><span>UPTIME</span></div>{(overview?.locations ?? []).map((row: any, i: number) => {
+                            const name = row.name;
               const sites = Array.isArray(row) ? row[1] : `${row.routers} routers`;
               const subscribers = Array.isArray(row) ? row[2] : formatNumber(row.activeUsers);
-              const revenue = Array.isArray(row) ? row[3] : 'Live data';
-              const uptime = Array.isArray(row) ? row[4] : `${row.routers ? Math.round((row.onlineRouters / row.routers) * 10000) / 100 : 100}%`;
+              const revenue = `${currency} ${formatNumber(0)}`;
+              const uptime = `${row.routers ? Math.round((row.onlineRouters / row.routers) * 10000) / 100 : 0}%`;
               return <div className="location-row" key={name}><div className="region"><span className="region-code">{Array.isArray(row) ? ['TZ','KE','UG','RW'][i] ?? 'GL' : name.slice(0,2).toUpperCase()}</span><strong>{name}</strong></div><span>{sites}</span><span>{subscribers}</span><strong>{revenue || demo[3]}</strong><span className="uptime">● {uptime}</span></div>;
             })}</div>
           </article>
@@ -141,7 +127,7 @@ export default function Home() {
         <section className="panel sessions-panel"><div className="panel-head"><div><div className="panel-kicker">LIVE NETWORK</div><h2>Active sessions</h2><p>{formatNumber(onlineSessions)} users currently connected</p></div><div className="session-actions"><span className="live-pill"><i/> LIVE</span><button className="outline-button">Export CSV</button><button className="outline-button">View sessions →</button></div></div>
           <div className="table-wrap"><table><thead><tr>{['Customer','Location','Gateway','Plan','IP address','Duration','Status'].map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{liveSessions.map((row: string[]) => <tr key={`${row[0]}-${row[4]}`}>{row.map((cell, i) => <td key={i}>{i === 6 ? <span className={`status ${cell.toLowerCase()}`}><i/> {cell}</span> : cell}</td>)}</tr>)}</tbody></table></div>
         </section>
-        <footer className="footer"><span>NEXORA Cloud · v0.1 Foundation</span><span>{overview ? 'Live tenant data · refreshed on load' : 'Demo workspace · authentication required for live data'}</span></footer>
+        <footer className="footer"><span>NEXORA Cloud · v0.1 Foundation</span><span>{hasLiveData ? 'Live tenant data · refreshed on load' : 'No demo metrics · authentication required for live data'}</span></footer>
       </section>
     </main>
   );

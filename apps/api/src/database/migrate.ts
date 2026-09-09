@@ -5,7 +5,7 @@ import { Client } from 'pg';
 const MIGRATION_LOCK_KEY = 7_421_931;
 
 async function main() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL || (process.env.DATABASE_HOST && process.env.DATABASE_NAME && process.env.DATABASE_USER ? `postgresql://${encodeURIComponent(process.env.DATABASE_USER)}:${encodeURIComponent(process.env.DATABASE_PASSWORD ?? '')}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}?sslmode=require` : undefined);
   if (!connectionString) throw new Error('DATABASE_URL is required');
 
   const client = new Client({ connectionString, ssl: { rejectUnauthorized: false } });

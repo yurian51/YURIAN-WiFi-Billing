@@ -84,13 +84,13 @@ export default function Home() {
 
         <section className="kpi-grid">
           {[
-            ['Monthly recurring revenue', `${currency} ${formatNumber(monthlyRevenue)}`, '+14.8%', 'current month'],
-            ['Active subscribers', formatNumber(activeCustomers), '+8.6%', 'active customers'],
-            ['Online sessions', formatNumber(onlineSessions), '+11.2%', 'currently connected'],
-            ['Network availability', `${availability}%`, '+0.08%', 'current fleet'],
+            ['Monthly recurring revenue', `${currency} ${formatNumber(monthlyRevenue)}`, overview ? 'LIVE' : '—', overview ? 'current month' : 'awaiting tenant data'],
+            ['Active subscribers', formatNumber(activeCustomers), overview ? 'LIVE' : '—', 'active customers'],
+            ['Online sessions', formatNumber(onlineSessions), overview ? 'LIVE' : '—', 'currently connected'],
+            ['Network availability', `${availability}%`, overview ? 'LIVE' : '—', 'current fleet'],
           ].map(([label, value, delta, note]) => <article className="kpi" key={label}>
             <div className="kpi-label"><span>{label}</span><button>•••</button></div>
-            <strong>{value}</strong><div className="kpi-foot"><span>↗ {delta}</span><small>{note}</small></div>
+            <strong>{value}</strong><div className="kpi-foot"><span>{delta}</span><small>{note}</small></div>
           </article>)}
         </section>
 
@@ -119,10 +119,10 @@ export default function Home() {
               return <div className="location-row" key={name}><div className="region"><span className="region-code">{Array.isArray(row) ? ['TZ','KE','UG','RW'][i] ?? 'GL' : name.slice(0,2).toUpperCase()}</span><strong>{name}</strong></div><span>{sites}</span><span>{subscribers}</span><strong>{revenue}</strong><span className="uptime">● {uptime}</span></div>;
             })}</div>
           </article>
-          <article className="panel attention-panel"><div className="panel-head"><div><div className="panel-kicker">OPERATIONS</div><h2>Attention required</h2><p>Prioritized events from your network</p></div><span className="alert-count">{overview?.kpis?.paymentFailures ?? 3}</span></div>
-            <div className="attention-item"><span className="severity critical"/><div><strong>Payment failures detected</strong><small>{overview?.kpis?.paymentFailures ?? 7} failed attempts · current period</small></div><span>›</span></div>
-            <div className="attention-item"><span className="severity warning"/><div><strong>Router requires review</strong><small>{network.degraded} routers · degraded state</small></div><span>›</span></div>
-            <div className="attention-item"><span className="severity info"/><div><strong>Voucher batches expiring</strong><small>Review active inventory before expiry</small></div><span>›</span></div>
+          <article className="panel attention-panel"><div className="panel-head"><div><div className="panel-kicker">OPERATIONS</div><h2>Attention required</h2><p>Prioritized events from your network</p></div><span className="alert-count">{overview?.kpis?.paymentFailures ?? 0}</span></div>
+            <div className="attention-item"><span className="severity critical"/><div><strong>Payment failures detected</strong><small>{overview?.kpis?.paymentFailures ?? 0} failed attempts · current period</small></div><span>›</span></div>
+            {overview && network.degraded > 0 && <div className="attention-item"><span className="severity warning"/><div><strong>Router requires review</strong><small>{network.degraded} routers · degraded state</small></div><span>›</span></div>}
+            {overview && <div className="attention-item"><span className="severity info"/><div><strong>Voucher inventory</strong><small>Review active voucher batches and expiry status</small></div><span>›</span></div>}
             <button className="full-button">Review all alerts <span>→</span></button>
           </article>
         </section>

@@ -66,15 +66,15 @@ export default function Home() {
         <nav className="nav">
           <p className="nav-section">OPERATIONS</p>
           {nav.slice(0, 7).map(([item, icon]) => (
-            <button key={item} onClick={() => setActive(item)} className={active === item ? 'nav-item active' : 'nav-item'}>
+            <a key={item} href={item === 'Overview' ? '/' : item === 'Customers' ? '/customers' : item === 'Plans & Products' ? '/packages' : item === 'Purchases' ? '/purchases' : item === 'Sessions' ? '/sessions' : item === 'Payments' ? '/payments' : item === 'Network' ? '/network' : item === 'Agents & Partners' ? '/agents' : item === 'Analytics' ? '/analytics' : item === 'Reports' ? '/reports' : item === 'Security & Audit' ? '/security' : '/settings'} className={active === item ? 'nav-item active' : 'nav-item'}>
               <span className="nav-icon">{icon}</span><span>{item}</span>
-            </button>
+            </a>
           ))}
           <p className="nav-section second">INSIGHTS & CONTROL</p>
           {nav.slice(7).map(([item, icon]) => (
-            <button key={item} onClick={() => setActive(item)} className={active === item ? 'nav-item active' : 'nav-item'}>
+            <a key={item} href={item === 'Overview' ? '/' : item === 'Customers' ? '/customers' : item === 'Plans & Products' ? '/packages' : item === 'Purchases' ? '/purchases' : item === 'Sessions' ? '/sessions' : item === 'Payments' ? '/payments' : item === 'Network' ? '/network' : item === 'Agents & Partners' ? '/agents' : item === 'Analytics' ? '/analytics' : item === 'Reports' ? '/reports' : item === 'Security & Audit' ? '/security' : '/settings'} className={active === item ? 'nav-item active' : 'nav-item'}>
               <span className="nav-icon">{icon}</span><span>{item}</span>
-            </button>
+            </a>
           ))}
         </nav>
         <div className="sidebar-status"><span className="pulse"/><div><strong>All systems operational</strong><small>{overview ? 'Live data connected' : 'Demo data · sign in to connect'}</small></div></div>

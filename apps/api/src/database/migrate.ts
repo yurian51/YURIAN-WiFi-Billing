@@ -8,7 +8,7 @@ async function main() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL is required');
 
-  const client = new Client({ connectionString });
+  const client = new Client({ connectionString, ssl: connectionString.includes('sslmode=require') ? undefined : { rejectUnauthorized: false } });
   await client.connect();
 
   try {

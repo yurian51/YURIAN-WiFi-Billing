@@ -5,7 +5,7 @@
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "dev": "pnpm --parallel --filter @nexora/api --filter @nexora/web dev",
-    "build": "pnpm install --no-frozen-lockfile && pnpm --filter @nexora/web build",
+    "build": "corepack pnpm install --no-frozen-lockfile && corepack pnpm --filter @nexora/web build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"

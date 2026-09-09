@@ -33,6 +33,9 @@ export default function Home() {
 
   const currency = overview?.tenant?.currency ?? 'TZS';
   const hasLiveData = Boolean(overview);
+  const revenueValues: number[] = overview?.revenueSeries ?? [];
+  const maxRevenue = Math.max(...revenueValues, 0);
+  const revenueBars = revenueValues.length ? revenueValues.map((value) => maxRevenue ? Math.max(4, (value / maxRevenue) * 100) : 0) : bars;
   const monthlyRevenue = overview?.kpis?.monthlyRevenue ?? 0;
   const activeCustomers = overview?.kpis?.activeCustomers ?? 0;
   const onlineSessions = overview?.kpis?.onlineSessions ?? 0;
@@ -95,7 +98,7 @@ export default function Home() {
           <article className="panel revenue-panel">
             <div className="panel-head"><div><div className="panel-kicker">FINANCIAL PERFORMANCE</div><h2>Revenue performance</h2><p>Consolidated across all operating regions</p></div><div className="periods">{['7D','30D','90D','1Y'].map(x => <button key={x} onClick={() => setPeriod(x)} className={period === x ? 'selected' : ''}>{x}</button>)}</div></div>
             <div className="revenue-total"><strong>{currency} {formatNumber(monthlyRevenue)}</strong><span>{overview ? 'Live' : '—'}</span><small>{overview ? 'current month' : 'Sign in to load live revenue'}</small></div>
-            <div className="chart"><div className="chart-scale"><span>50M</span><span>35M</span><span>20M</span><span>5M</span><span>0</span></div><div className="chart-body"><div className="grid-line g1"/><div className="grid-line g2"/><div className="grid-line g3"/><div className="grid-line g4"/><div className="bars">{(overview?.revenueSeries ?? bars).map((h: number, i: number) => <span style={{ height: `${h}%` }} key={i} />)}</div><div className="x-labels"><span>01</span><span>05</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span></div></div></div>
+            <div className="chart"><div className="chart-scale"><span>50M</span><span>35M</span><span>20M</span><span>5M</span><span>0</span></div><div className="chart-body"><div className="grid-line g1"/><div className="grid-line g2"/><div className="grid-line g3"/><div className="grid-line g4"/><div className="bars">{revenueBars.map((h: number, i: number) => <span style={{ height: `${h}%` }} key={i} />)}</div><div className="x-labels"><span>01</span><span>05</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span></div></div></div>
           </article>
           <article className="panel health-panel">
             <div className="panel-kicker">NETWORK HEALTH</div><h2>Infrastructure status</h2><p>Across {network.totalRouters} registered routers</p>

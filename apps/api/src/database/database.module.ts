@@ -14,7 +14,7 @@ export const PG_POOL = Symbol('PG_POOL');
       useFactory: (config: ConfigService) =>
         new Pool({
           connectionString: config.get<string>('DATABASE_URL'),
-          ssl: config.get<string>('DATABASE_URL')?.includes('sslmode=require') ? undefined : { rejectUnauthorized: false },
+          ssl: { rejectUnauthorized: false },
           max: config.get<number>('DATABASE_POOL_MAX', 10),
           idleTimeoutMillis: 30_000,
           connectionTimeoutMillis: 5_000,

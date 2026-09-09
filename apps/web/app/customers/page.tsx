@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://nexora-api.onrender.com/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://nexora-api-boiv.onrender.com/api/v1';
 type Customer = { id: string; username?: string | null; fullName?: string | null; email?: string | null; phone?: string | null; isActive?: boolean; createdAt?: string };
 type Response = { data: Customer[]; pagination: { page: number; limit: number; total: number; pages: number } };
 

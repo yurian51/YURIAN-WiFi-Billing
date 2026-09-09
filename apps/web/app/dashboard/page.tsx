@@ -113,7 +113,7 @@ export default function Home() {
               const subscribers = Array.isArray(row) ? row[2] : formatNumber(row.activeUsers);
               const revenue = `${currency} ${formatNumber(0)}`;
               const uptime = `${row.routers ? Math.round((row.onlineRouters / row.routers) * 10000) / 100 : 0}%`;
-              return <div className="location-row" key={name}><div className="region"><span className="region-code">{Array.isArray(row) ? ['TZ','KE','UG','RW'][i] ?? 'GL' : name.slice(0,2).toUpperCase()}</span><strong>{name}</strong></div><span>{sites}</span><span>{subscribers}</span><strong>{revenue || demo[3]}</strong><span className="uptime">● {uptime}</span></div>;
+              return <div className="location-row" key={name}><div className="region"><span className="region-code">{Array.isArray(row) ? ['TZ','KE','UG','RW'][i] ?? 'GL' : name.slice(0,2).toUpperCase()}</span><strong>{name}</strong></div><span>{sites}</span><span>{subscribers}</span><strong>{revenue}</strong><span className="uptime">● {uptime}</span></div>;
             })}</div>
           </article>
           <article className="panel attention-panel"><div className="panel-head"><div><div className="panel-kicker">OPERATIONS</div><h2>Attention required</h2><p>Prioritized events from your network</p></div><span className="alert-count">{overview?.kpis?.paymentFailures ?? 3}</span></div>

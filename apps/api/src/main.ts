@@ -10,6 +10,7 @@ async function bootstrap() {
   const configuredOrigin = config.get<string>('CORS_ORIGIN', '*').trim();
   const allowAnyOrigin = configuredOrigin === '*';
 
+  app.enableShutdownHooks();
   app.setGlobalPrefix('api/v1');
   app.enableCors({
     origin: allowAnyOrigin ? true : configuredOrigin.split(',').map((origin) => origin.trim()).filter(Boolean),

@@ -59,6 +59,20 @@ export class NotificationsService {
     }
   }
 
+  async recoverStaleProcessing(maxAgeMinutes = 15) {
+    const age = Math.min(Math.max(Math.trunc(maxAgeMinutes), 1), 1440);
+    const result = await this.db.query(
+      `UPDATE notification_outbox
+       SET status = 'PENDING', available_at = now(), locked_at = NULL,
+           last_error = 'Recovered stale processing lock', updated_at = now()
+       WHERE status = 'PROCESSING'
+         AND locked_at < now() - ($1 * interval '1 minute')
+       RETURNING id`,
+      [age],
+    );
+    return { recovered: result.rowCount ?? 0 };
+  }
+
   async markSent(id: string) {
     const result = await this.db.query(
       `UPDATE notification_outbox

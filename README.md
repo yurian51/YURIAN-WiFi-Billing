@@ -1,10 +1,21 @@
-# NEXORA
+# JASLYN NET
 
-Production-oriented network billing and connectivity operations platform for WiFi businesses and ISPs.
+**Connectivity & ISP Operating System**
+
+JASLYN NET is the network operations platform within the JASLYN ecosystem, built by YURIAN TECH LTD for WiFi businesses, hotspot operators and ISPs.
 
 ## Product
 
-**NEXORA** is the operating platform for connected businesses. It brings together WiFi/ISP billing, customers, branches, routers, HotSpot, vouchers, subscriptions, payments, sessions, agents, reporting and network operations.
+JASLYN NET unifies WiFi/ISP billing, customers, locations, routers, HotSpot, vouchers, subscriptions, payments, sessions, agents, reporting and network operations in one control plane.
+
+## Product identity
+
+- **Master brand:** JASLYN
+- **Product:** JASLYN NET
+- **Company:** YURIAN TECH LTD
+- **Category:** Connectivity & ISP Operating System
+- **Tagline:** Connect. Control. Grow.
+- **AI intelligence:** JASLYN AI
 
 ## Architecture
 
@@ -17,30 +28,31 @@ Production-oriented network billing and connectivity operations platform for WiF
 - Secure router connectivity: WireGuard
 - Deployment: Docker + GitHub Actions
 
-## Product modules
+## Core modules
 
-- Overview and executive analytics
+- Executive overview and analytics
+- Multi-tenant organizations and locations
 - Customer and device management
-- Plans, vouchers and subscriptions
+- Plans, packages, vouchers and subscriptions
 - Hotspots, routers, RADIUS and live sessions
 - Payments, transactions and reconciliation
 - Agents and reseller operations
 - Reports, alerts and audit logs
 - Captive portals and integrations
+- Network operations and router connectivity
 
-## Phase 1
+## Security baseline
 
-Authentication/RBAC, multi-tenant organizations and locations, router registry, customers, packages, vouchers, sessions, payment abstraction, captive portal, professional operations dashboard and audit logs.
+JASLYN NET is designed around tenant isolation, RBAC and least privilege, audit logging, signed payment webhooks, encrypted router credentials, rate limiting, idempotent payment processing and controlled destructive operations. Secrets must never be committed to Git.
 
-## Security
+## Engineering principle
 
-No secrets in Git. Tenant isolation, RBAC/least privilege, audit logs, signed payment webhooks, encrypted router secrets, rate limiting and controlled destructive operations.
+This repository is developed as a real production system, not a static demo. Features must connect end-to-end across the control plane, database, payment layer, AAA layer, network integration and user interface, with verification before being considered complete.
 
 ## Status
 
-FOUNDATION / NEXORA BRAND MIGRATION
+**FOUNDATION / JASLYN NET BRAND MIGRATION**
 
-## Brand
+## Ecosystem
 
-**NEXORA**  
-*The Operating Platform for Connected Businesses.*
+JASLYN NET is one product in the wider JASLYN ecosystem, alongside JASLYN AI, JASLYN OS, JASLYN ERP, JASLYN EDU, JASLYN PAY and JASLYN CLOUD.

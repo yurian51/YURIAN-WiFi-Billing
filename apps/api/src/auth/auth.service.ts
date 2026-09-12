@@ -10,8 +10,8 @@ import { LoginDto, RegisterDto } from './auth.dto';
 
 const scrypt = promisify(scryptCallback);
 const PASSWORD_KEY_LENGTH = 64;
-const ISSUER = 'nexora';
-const AUDIENCE = 'nexora-api';
+const ISSUER = 'jaslyn-net';
+const AUDIENCE = 'jaslyn-net-api';
 
 @Injectable()
 export class AuthService {

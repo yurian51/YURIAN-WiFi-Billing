@@ -59,7 +59,7 @@ export class NotificationsService {
     }
   }
 
-  async recoverStaleProcessing(maxAgeMinutes = 15) {
+  async recoverStaleProcessing(tenantId?: string, maxAgeMinutes = 15) {
     const age = Math.min(Math.max(Math.trunc(maxAgeMinutes), 1), 1440);
     const result = await this.db.query(
       `UPDATE notification_outbox
@@ -67,10 +67,25 @@ export class NotificationsService {
            last_error = 'Recovered stale processing lock', updated_at = now()
        WHERE status = 'PROCESSING'
          AND locked_at < now() - ($1 * interval '1 minute')
-       RETURNING id`,
-      [age],
+         AND ($2::uuid IS NULL OR tenant_id = $2::uuid)
+       RETURNING id, tenant_id AS "tenantId"`,
+      [age, tenantId ?? null],
     );
-    return { recovered: result.rowCount ?? 0 };
+    return { recovered: result.rowCount ?? 0, data: result.rows };
+  }
+
+  async stats(tenantId: string) {
+    const result = await this.db.query(
+      `SELECT status, count(*)::int AS count
+       FROM notification_outbox
+       WHERE tenant_id = $1
+       GROUP BY status
+       ORDER BY status`,
+      [tenantId],
+    );
+    const totals = { PENDING: 0, PROCESSING: 0, SENT: 0, FAILED: 0, CANCELED: 0 };
+    for (const row of result.rows) totals[row.status as keyof typeof totals] = Number(row.count);
+    return totals;
   }
 
   async markSent(id: string) {

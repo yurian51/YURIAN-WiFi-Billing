@@ -8,7 +8,7 @@ export class HealthController {
 
   @Get()
   check() {
-    return { status: 'ok', service: 'nexora-api', timestamp: new Date().toISOString() };
+    return { status: 'ok', service: 'jaslyn-net-api', product: 'JASLYN NET', timestamp: new Date().toISOString() };
   }
 
   @Get('ready')
@@ -16,7 +16,8 @@ export class HealthController {
     const result = await this.db.query('select 1 as ok');
     return {
       status: result.rows[0]?.ok === 1 ? 'ready' : 'not_ready',
-      service: 'nexora-api',
+      service: 'jaslyn-net-api',
+      product: 'JASLYN NET',
       database: 'ok',
       timestamp: new Date().toISOString(),
     };

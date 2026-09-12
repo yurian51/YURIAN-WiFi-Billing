@@ -80,7 +80,10 @@ export class PaymentsService {
     try {
       await eventClient.query('BEGIN');
       const event = await eventClient.query(
-        `INSERT INTO payment_events (tenant_id, payment_id, provider, provider_event_id, event_type, payload, signature_valid, processing_status) VALUES ($1,NULL,$2,$3,$4,$5,true,'RECEIVED') ON CONFLICT (provider, provider_event_id) DO NOTHING RETURNING id`,
+        `INSERT INTO payment_events (tenant_id, payment_id, provider, provider_event_id, event_type, payload, signature_valid, processing_status)
+         VALUES ($1,NULL,$2,$3,$4,$5,true,'RECEIVED')
+         ON CONFLICT (tenant_id, provider, provider_event_id) WHERE provider_event_id IS NOT NULL
+         DO NOTHING RETURNING id`,
         [tenantId, provider, input.providerEventId.trim(), input.eventType.trim(), input.payload ?? {}],
       );
       if (!event.rowCount) {

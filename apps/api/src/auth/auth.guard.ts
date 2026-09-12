@@ -12,6 +12,9 @@ export type AuthenticatedRequest = {
   };
 };
 
+const ISSUER = 'jaslyn-net';
+const AUDIENCE = 'jaslyn-net-api';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly config: ConfigService) {}
@@ -27,8 +30,8 @@ export class AuthGuard implements CanActivate {
 
     try {
       const { payload } = await jwtVerify(token, new TextEncoder().encode(secret), {
-        issuer: 'nexora',
-        audience: 'nexora-api',
+        issuer: ISSUER,
+        audience: AUDIENCE,
       });
       if (typeof payload.sub !== 'string' || typeof payload.tenantId !== 'string' || typeof payload.role !== 'string') {
         throw new Error('Invalid claims');

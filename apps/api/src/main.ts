@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
@@ -14,7 +15,13 @@ async function bootstrap() {
     origin: allowAnyOrigin ? true : configuredOrigin.split(',').map((origin) => origin.trim()).filter(Boolean),
     credentials: !allowAnyOrigin,
   });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true, forbidUnknownValues: true }));
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+    forbidUnknownValues: true,
+    forbidNonWhitelisted: true,
+  }));
+  app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(config.get<number>('PORT', 4000), '0.0.0.0');
 }
 

@@ -6,7 +6,8 @@ export class ReadinessController {
   getReadiness() {
     return {
       status: 'ready',
-      service: 'nexora-api',
+      service: 'jaslyn-net-api',
+      product: 'JASLYN NET',
       timestamp: new Date().toISOString(),
     };
   }

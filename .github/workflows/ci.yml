@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --ignore-scripts
@@ -30,24 +31,32 @@ jobs:
       - name: Validate migration files
         shell: bash
         run: |
-          test -f apps/api/migrations/001_initial_schema.sql
-          test -f apps/api/migrations/002_saas_billing_access.sql
-          test -f apps/api/migrations/005_payment_hardening.sql
-          test -f apps/api/migrations/006_payment_provider_configs.sql
+          set -euo pipefail
+          for file in \
+            apps/api/migrations/001_initial_schema.sql \
+            apps/api/migrations/002_saas_billing_access.sql \
+            apps/api/migrations/005_payment_hardening.sql \
+            apps/api/migrations/006_payment_provider_configs.sql \
+            apps/api/migrations/007_voucher_hardening.sql \
+            apps/api/migrations/008_operational_hardening.sql; do
+            test -f "$file"
+          done
           grep -q "CREATE TABLE IF NOT EXISTS organization_subscriptions" apps/api/migrations/002_saas_billing_access.sql
           grep -q "CREATE TABLE IF NOT EXISTS access_grants" apps/api/migrations/002_saas_billing_access.sql
           grep -q "processing_status" apps/api/migrations/005_payment_hardening.sql
           grep -q "CREATE TABLE IF NOT EXISTS payment_provider_configs" apps/api/migrations/006_payment_provider_configs.sql
+          grep -q "notification_outbox" apps/api/migrations/008_operational_hardening.sql
+          grep -q "audit_logs" apps/api/migrations/008_operational_hardening.sql
           grep -q "UNIQUE (tenant_id, idempotency_key)" apps/api/migrations/001_initial_schema.sql
 
       - name: Typecheck API
-        run: pnpm --filter @nexora/api typecheck
+        run: pnpm --filter @jaslyn-net/api typecheck
 
       - name: Typecheck Web
-        run: pnpm --filter @nexora/web typecheck
+        run: pnpm --filter @jaslyn-net/web typecheck
 
       - name: Build API
-        run: pnpm --filter @nexora/api build
+        run: pnpm --filter @jaslyn-net/api build
 
       - name: Build Web
-        run: pnpm --filter @nexora/web build
+        run: pnpm --filter @jaslyn-net/web build

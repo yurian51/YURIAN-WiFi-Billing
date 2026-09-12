@@ -39,7 +39,8 @@ jobs:
             apps/api/migrations/006_payment_provider_configs.sql \
             apps/api/migrations/007_voucher_hardening.sql \
             apps/api/migrations/008_operational_hardening.sql \
-            apps/api/migrations/009_payment_concurrency.sql; do
+            apps/api/migrations/009_payment_concurrency.sql \
+            apps/api/migrations/010_notification_queue_indexes.sql; do
             test -f "$file"
           done
           grep -q "CREATE TABLE IF NOT EXISTS organization_subscriptions" apps/api/migrations/002_saas_billing_access.sql
@@ -50,6 +51,7 @@ jobs:
           grep -q "audit_logs" apps/api/migrations/008_operational_hardening.sql
           grep -q "UNIQUE (tenant_id, idempotency_key)" apps/api/migrations/001_initial_schema.sql
           grep -q "payments_one_pending_per_purchase_uq" apps/api/migrations/009_payment_concurrency.sql
+          grep -q "notification_outbox_processing_lock_idx" apps/api/migrations/010_notification_queue_indexes.sql
 
       - name: Typecheck API
         run: pnpm --filter @jaslyn-net/api typecheck

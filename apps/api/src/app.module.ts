@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { BillingModule } from './billing/billing.module';
 import { CustomersModule } from './customers/customers.module';
@@ -12,6 +13,19 @@ import { PaymentsModule } from './payments/payments.module';
 import { VouchersModule } from './vouchers/vouchers.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, AuthModule, HealthModule, OverviewModule, CustomersModule, BillingModule, PackagesModule, PurchasesModule, PaymentsModule, VouchersModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    AuditModule,
+    AuthModule,
+    HealthModule,
+    OverviewModule,
+    CustomersModule,
+    BillingModule,
+    PackagesModule,
+    PurchasesModule,
+    PaymentsModule,
+    VouchersModule,
+  ],
 })
 export class AppModule {}
